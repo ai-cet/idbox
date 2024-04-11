@@ -1,0 +1,28 @@
+{
+  "header": {
+    "value": "BIRTHDATE"
+  },
+  "columns": "prefix_day;number|slash|months|slash|prefix_year;number;number",
+  "columnTypes": [
+    {
+      "id": "prefix_day",
+      "values": "0;1;2;3"
+    },
+    {
+      "id": "months",
+      "values": "Jan;Apr;Jul;Oct|Feb;May;Aug;Nov|Mar;Jun;Sep;Dec",
+      "isEmbed": false,
+      "fontSize": 12,
+      "color": "#000000"
+    },
+    {
+      "id": "prefix_year",
+      "values": ";19;20"
+    },
+    {
+      "id": "slash",
+      "values": "",
+      "defaultValue": "/"
+    }
+  ]
+}

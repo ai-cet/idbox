@@ -1,0 +1,23 @@
+{
+  "header": {
+    "value": "NRIC/FIN",
+    "color": "#000000",
+    "fill": "#ffccdc"
+  },
+  "fills": ["#ffffff", "#ffeefe"],
+  "columns": "prefix_nric|number;number;number;number;number;number;number|postfix_nric",
+  "columnTypes": [
+    {
+      "id": "prefix_nric",
+      "values": "S;T;F;G;M",
+      "fontSize": 18,
+      "isEmbed": false,
+      "color": "#000000",
+      "fontWeight": "bold"
+    },
+    {
+      "id": "postfix_nric",
+      "values": "A;B;C;D;E;F;G;H;I;J;K|L;M;N;P;Q;R;T;U;W;X;Z"
+    }
+  ]
+}

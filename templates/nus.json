@@ -1,0 +1,11 @@
+{
+  "header": {
+    "value": "STUDENT NUMBER",
+    "fontWeight": "bold",
+    "fontSize": 20,
+    "fill": "#000000",
+    "color": "#ffffff"
+  },
+  "fills": ["#ffffff", "#ebf3ff"],
+  "columns": "prefix_nus|number;number;number;number;number;number;number|postfix_nus"
+}

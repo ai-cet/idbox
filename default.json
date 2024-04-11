@@ -1,0 +1,49 @@
+{
+  "header": {
+    "value": "",
+    "fontWeight": "bold",
+    "fontSize": 20,
+    "fill": "#ffffff",
+    "color": "#000000"
+  },
+  "fills": [],
+  "columns": "",
+  "columnTypes": [
+    {
+      "id": "default",
+      "values": "",
+      "defaultValue": "",
+      "fontSize": 15,
+      "fontWeight": "normal",
+      "isEmbed": true,
+      "color": "#c2c3c3",
+      "fill": "#ffffff",
+      "hasDivider": false,
+      "hideCircle": false
+    },
+    {
+      "id": "",
+      "values": ""
+    },
+    {
+      "id": "number",
+      "values": "0;1;2;3;4;5;6;7;8;9"
+    },
+    {
+      "id": "alphabet",
+      "values": "A;B;C;D;E;F;G;H;I|J;K;L;M;N;O;P;Q;R|S;T;U;V;W;X;Y;Z"
+    },
+    {
+      "id": "prefix_nus",
+      "values": "U;A;HT;NT",
+      "defaultValue": "A",
+      "fontSize": 18,
+      "isEmbed": false,
+      "color": "#000000"
+    },
+    {
+      "id": "postfix_nus",
+      "values": "A;B;E;H;J;L;M|N;R;U;W;X;Y"
+    }
+  ]
+}
