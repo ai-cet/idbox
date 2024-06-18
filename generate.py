@@ -1,22 +1,25 @@
-from save_to import SUPPORTED_EXTENSIONS
-from parser import parse_json
-import os
-import re
-import json
 import argparse
+import json
+import os
 import pathlib
-from jinja2 import Template # pip install Jinja2
+import re
+
+from jinja2 import Template  # pip install Jinja2
+
+from json_parser import parse_json
+from save_to import SUPPORTED_EXTENSIONS
 
 FILENAME_DEFAULT_JSON = "default.json"
-WIDTH_DEFAULT  = 30
+WIDTH_DEFAULT = 30
 HEIGHT_DEFAULT = 30
-HEIGHT_WRITING  = 40
+HEIGHT_WRITING = 40
 BUBBLE_RATIO = 0.8
-HEIGHT_TEXT_OFFSET = 1.5 # to ensure text is aligned vertically middle
+HEIGHT_TEXT_OFFSET = 1.5  # to ensure text is aligned vertically middle
+
 
 def generate(data, filename_output, extension=None, use_local=True):
     columns = data["columns"]
-        
+
     data["num_columns"] = len(columns)
     max_rows = max(len(column["values"]) for column in columns)
     # if the first column is too long, add a row for the bot-left marker
@@ -43,12 +46,16 @@ def generate(data, filename_output, extension=None, use_local=True):
     converter = SUPPORTED_EXTENSIONS[extension]
     converter(filename_output, content_svg, use_local=use_local)
 
+
 def slugify(text, separator="_"):
     text = text.lower()
     text = re.sub(r"\s+", separator, text)  # Replace spaces with separator
-    text = re.sub(r"[^\w\s-]", "", text) # Remove all non-word characters except hyphens
+    text = re.sub(
+        r"[^\w\s-]", "", text
+    )  # Remove all non-word characters except hyphens
     text = re.sub(f"{separator}+", separator, text).strip(separator)
     return text
+
 
 def is_json(text):
     try:
@@ -57,16 +64,50 @@ def is_json(text):
     except json.JSONDecodeError:
         return False
 
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description=f'Generates file format ({"/".join(SUPPORTED_EXTENSIONS.keys())}) from given id-box.json configuration.')
-    parser.add_argument('configuration', help='path/to/config.json or "{json: string}" or "command-line-pattern"')
-    parser.add_argument('-f', '--fills', type=str, default="", help='Fill values to be used in command-line usage')
-    parser.add_argument('-e', '--extension', type=str, default="svg", choices=SUPPORTED_EXTENSIONS.keys(), help='Output extension type')
-    parser.add_argument('-o', '--output', type=str, default="", help='Output filename, extension here will override --extension flag if specified')
-    parser.add_argument('-d', '--docker', action='store_true', help='Flag to use docker image for conversion')
+    parser = argparse.ArgumentParser(
+        description=f'Generates file format ({"/".join(SUPPORTED_EXTENSIONS.keys())}) from given id-box.json configuration.'
+    )
+    parser.add_argument(
+        "configuration",
+        help='path/to/config.json or "{json: string}" or "command-line-pattern"',
+    )
+    parser.add_argument(
+        "-f",
+        "--fills",
+        type=str,
+        default="",
+        help="Fill values to be used in command-line usage",
+    )
+    parser.add_argument(
+        "-e",
+        "--extension",
+        type=str,
+        default="svg",
+        choices=SUPPORTED_EXTENSIONS.keys(),
+        help="Output extension type",
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        default="",
+        help="Output filename, extension here will override --extension flag if specified",
+    )
+    parser.add_argument(
+        "-d",
+        "--docker",
+        action="store_true",
+        help="Flag to use docker image for conversion",
+    )
 
     args = parser.parse_args()
-    args.fills = [hexcode or "none" for hexcode in args.fills.rstrip(";").split(";")] if args.fills else []
+    args.fills = (
+        [hexcode or "none" for hexcode in args.fills.rstrip(";").split(";")]
+        if args.fills
+        else []
+    )
     configuration = args.configuration
     if os.path.exists(configuration):
         filename_json = pathlib.Path(configuration)
@@ -75,14 +116,16 @@ if __name__ == "__main__":
         filestem_output = filename_json.stem
     elif is_json(configuration):
         template_data = json.loads(configuration)
-        filestem_output = slugify(template_data.get("header", {}).get("value", "output"))
+        filestem_output = slugify(
+            template_data.get("header", {}).get("value", "output")
+        )
     else:
         header_value, columns = args.configuration.split("|", maxsplit=1)
         template_data = {
             "header": {
                 "value": header_value,
             },
-            "columns": columns
+            "columns": columns,
         }
         filestem_output = slugify(header_value)
     if args.fills:

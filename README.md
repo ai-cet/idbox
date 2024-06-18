@@ -1,15 +1,28 @@
 # Setup
 
+## Pre-requisites
+
+- [python ^3.11](https://www.python.org/)
+- [poetry ^1.8.3](https://python-poetry.org/docs/)
+
+## Development
+
 ```sh
-pip install Jinja2 docker
+# Dependencies
+poetry config virtualenvs.in-project true
+poetry install
+poetry shell
+
+# Pre-commit hooks
+pre-commit install
 ```
 
 Default output type is in SVG. If you require JPG/PNG/PDF outputs, CarioSVG needs to be installed.
 Ensure that Cario is also on your system.
 
 ```sh
-sudo apt-get install libcairo2-dev
-pip install CairoSVG
+brew install cairo pkg-config # macOS/Homebrew
+sudo apt-get install libcairo2-dev # Ubuntu/Debian
 ```
 
 # Usage with template files
@@ -34,10 +47,10 @@ python generate.py templates/nric.json -o samples/out.png
 
 # Usage on command-line
 
-Instead of a json configuration, you may also supply an alternative string argument that follows the following format:  
+Instead of a json configuration, you may also supply an alternative string argument that follows the following format:
 `<header-title>|<column-id><column-separator><column-id>...`
 
-The fills flag `-f` or `--fills` takes in a string argument that follows the following format:  
+The fills flag `-f` or `--fills` takes in a string argument that follows the following format:
 `<hex-code>;<hex-code>...`
 
 For example, to generate NUS, the following command can be used:
@@ -48,7 +61,7 @@ python generate.py "STUDENT NUMBER|prefix_nus|number;number;number;number;number
 
 # Configuring custom types
 
-Suppose you want to create a new ID box to identify the birthday in this format `01/Jan/1970`  
+Suppose you want to create a new ID box to identify the birthday in this format `01/Jan/1970`
 Where the format begins with
 
 1. a day of the month, represented by either 0 or 1 or 2 or 3, followed by a final digit, then
@@ -179,14 +192,14 @@ python generate.py templates/birthdate-new.json -o samples/birthdate.pdf
 
 # Advanced concepts: Default values and Anonymous column types
 
-You can specify an anonymous column type using the following syntax  
-`<column-identifier>[<values>](default-value)`  
+You can specify an anonymous column type using the following syntax
+`<column-identifier>[<values>](default-value)`
 in the command-line.
 
-You may also include an optional prefix `+` to set the `isEmbed` to `false`  
+You may also include an optional prefix `+` to set the `isEmbed` to `false`
 `+[<values>](default-value)`
 
-If you wish to override an existing column type, you can also use  
+If you wish to override an existing column type, you can also use
 `<column-identifier>[<values>](default-value)`
 
 ### Example usage
