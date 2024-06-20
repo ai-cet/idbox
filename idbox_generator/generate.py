@@ -1,15 +1,19 @@
 import argparse
 import json
 import os
-import pathlib
 import re
+from pathlib import Path
 
 from jinja2 import Template  # pip install Jinja2
 
 from .json_parser import parse_json
 from .save_to import SUPPORTED_EXTENSIONS
 
-FILENAME_DEFAULT_JSON = "default.json"
+_CURRENT_DIR = Path(__file__).parent.absolute()
+_ASSET_DIR = _CURRENT_DIR / "assets"
+_DATA_DIR = _CURRENT_DIR / "data"
+
+FILENAME_DEFAULT_JSON = _DATA_DIR / "default.json"
 WIDTH_DEFAULT = 30
 HEIGHT_DEFAULT = 30
 HEIGHT_WRITING = 40
@@ -17,7 +21,11 @@ BUBBLE_RATIO = 0.8
 HEIGHT_TEXT_OFFSET = 1.5  # to ensure text is aligned vertically middle
 
 
-def generate(data):
+def generate(template_data):
+    with open(FILENAME_DEFAULT_JSON) as f:
+        data = json.load(f)
+
+    data = parse_json(data, template_data)
     columns = data["columns"]
 
     data["num_columns"] = len(columns)
@@ -36,7 +44,7 @@ def generate(data):
     data["height_bubble"] = HEIGHT_DEFAULT * BUBBLE_RATIO
     data["height_text_offset"] = HEIGHT_TEXT_OFFSET
 
-    svg_template_filepath = os.path.join("assets", "template.svg")
+    svg_template_filepath = _ASSET_DIR / "template.svg"
     with open(svg_template_filepath) as f:
         svg_template = Template(f.read())
 
@@ -44,7 +52,7 @@ def generate(data):
 
 
 def save_svg_to_file(content_svg, filename_output, extension=None, use_local=True):
-    extension = extension or pathlib.Path(filename_output).suffix[1:]
+    extension = extension or Path(filename_output).suffix[1:]
     converter = SUPPORTED_EXTENSIONS[extension]
     converter(filename_output, content_svg, use_local=use_local)
 
@@ -112,7 +120,7 @@ def main():
     )
     configuration = args.configuration
     if os.path.exists(configuration):
-        filename_json = pathlib.Path(configuration)
+        filename_json = Path(configuration)
         with open(filename_json) as f:
             template_data = json.load(f)
         filestem_output = filename_json.stem
@@ -134,14 +142,10 @@ def main():
         template_data["fills"] = args.fills
 
     filename_output = args.output or f"{filestem_output}.{args.extension}"
-    if pathlib.Path(filename_output).suffix[1:] in SUPPORTED_EXTENSIONS:
-        args.extension = pathlib.Path(filename_output).suffix[1:]
+    if Path(filename_output).suffix[1:] in SUPPORTED_EXTENSIONS:
+        args.extension = Path(filename_output).suffix[1:]
 
-    with open(FILENAME_DEFAULT_JSON) as f:
-        data = json.load(f)
-
-    data = parse_json(data, template_data)
-    content_svg = generate(data)
+    content_svg = generate(template_data)
     save_svg_to_file(
         content_svg,
         filename_output,

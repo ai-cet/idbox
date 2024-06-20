@@ -1,13 +1,22 @@
 [tool.poetry]
-name = "idbox-generator"
+name = "idbox_generator"
 version = "0.1.0"
 description = ""
 authors = []
 readme = "README.md"
-packages = [{ include = "src" }]
+include = [
+  { path = "idbox_generator/assets", format = [
+    "sdist",
+    "wheel",
+  ] },
+  { path = "idbox_generator/data", format = [
+    "sdist",
+    "wheel",
+  ] },
+]
 
 [tool.poetry.scripts]
-generate = 'src.generate:main'
+generate = 'idbox_generator.generate:main'
 
 [tool.poetry.dependencies]
 python = "^3.9"
