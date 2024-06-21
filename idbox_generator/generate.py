@@ -1,15 +1,21 @@
 import argparse
+import dataclasses
 import json
 import os
 import re
 from pathlib import Path
 from typing import Optional
 
-from jinja2 import Template  # pip install Jinja2
+from jinja2 import Template
+
+from idbox_generator.schema import IdBoxSchema, IdBoxSchemaHeader
 
 from .data_matrix import str_to_datamatrix
 from .json_parser import parse_json
 from .save_to import SUPPORTED_EXTENSIONS
+
+# pip install Jinja2
+
 
 _CURRENT_DIR = Path(__file__).parent.absolute()
 _ASSET_DIR = _CURRENT_DIR / "assets"
@@ -21,6 +27,10 @@ HEIGHT_DEFAULT = 30
 HEIGHT_WRITING = 40
 BUBBLE_RATIO = 0.8
 HEIGHT_TEXT_OFFSET = 1.5  # to ensure text is aligned vertically middle
+
+
+def generate_by_schema(schema: IdBoxSchema):
+    return generate(dataclasses.asdict(schema), schema.data_matrix_text)
 
 
 def generate(template_data, data_matrix_text: Optional[str] = None):

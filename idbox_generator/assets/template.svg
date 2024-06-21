@@ -83,6 +83,10 @@
   {% endfor %}
 
 <!-- Define the markers -->
+  <rect x="0" y="0" width="{{ width_box }}" height="{{ height_box }}" fill="white" />
+  <rect x="0" y="{{ height_max - height_box }}" width="{{ width_box }}" height="{{ height_box }}" fill="white" />
+  <rect x="{{ width_max - width_box }}" y="0" width="{{ width_box }}" height="{{ height_box }}" fill="white" />
+
   {% for is_white_row in data_matrix %}
     {% set r = loop.index0 %}
     {% for is_white in is_white_row %}
