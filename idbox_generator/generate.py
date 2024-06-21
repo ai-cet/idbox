@@ -3,9 +3,11 @@ import json
 import os
 import re
 from pathlib import Path
+from typing import Optional
 
 from jinja2 import Template  # pip install Jinja2
 
+from .data_matrix import str_to_datamatrix
 from .json_parser import parse_json
 from .save_to import SUPPORTED_EXTENSIONS
 
@@ -21,7 +23,7 @@ BUBBLE_RATIO = 0.8
 HEIGHT_TEXT_OFFSET = 1.5  # to ensure text is aligned vertically middle
 
 
-def generate(template_data):
+def generate(template_data, data_matrix_text: Optional[str] = None):
     with open(FILENAME_DEFAULT_JSON) as f:
         data = json.load(f)
 
@@ -43,6 +45,10 @@ def generate(template_data):
     data["width_bubble"] = WIDTH_DEFAULT * BUBBLE_RATIO
     data["height_bubble"] = HEIGHT_DEFAULT * BUBBLE_RATIO
     data["height_text_offset"] = HEIGHT_TEXT_OFFSET
+
+    data["data_matrix"] = []
+    if data_matrix_text != None:
+        data["data_matrix"] = str_to_datamatrix(data_matrix_text)
 
     svg_template_filepath = _ASSET_DIR / "template.svg"
     with open(svg_template_filepath) as f:
