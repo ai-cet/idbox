@@ -84,6 +84,16 @@ def save_svg_to_file(content_svg, filename_output, extension=None, use_local=Tru
     converter(filename_output, content_svg, use_local=use_local)
 
 
+def convert_svg_to_png(content_svg, dpi=300, scale=2) -> bytes:
+    from cairosvg import svg2png
+
+    return svg2png(
+        bytestring=content_svg,
+        dpi=dpi,
+        scale=scale,
+    )  # type: ignore
+
+
 def slugify(text, separator="_"):
     text = text.lower()
     text = re.sub(r"\s+", separator, text)  # Replace spaces with separator

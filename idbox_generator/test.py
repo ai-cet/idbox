@@ -49,4 +49,4 @@ def test():
     )
     svg_params = generate_svg_params_by_schema(schema)
     svg_content = create_svg_from_params(svg_params)
-    save_svg_to_file(svg_content, "test.svg")
+    save_svg_to_file(svg_content, "test.png", "png")
