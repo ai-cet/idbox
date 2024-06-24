@@ -16,6 +16,5 @@ def str_to_datamatrix(text: str) -> list[list[bool]]:
     for r in range(EDGE_SIZE):
         for c in range(EDGE_SIZE):
             iloc = r * BYTES_PER_DATAMATRIX_EDGE + c * BYTES_PER_SQUARE_EDGE
-            # print(encoded.pixels[iloc] == 255)
             tiles[r][c] = encoded.pixels[iloc] == 255
     return tiles

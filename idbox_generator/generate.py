@@ -8,10 +8,10 @@ from typing import Optional
 
 from jinja2 import Template
 
-from idbox_generator.schema import IdBoxSchema, IdBoxSchemaHeader
+from idbox_generator.schema import IdBoxSchema, SvgParams
 
 from .data_matrix import str_to_datamatrix
-from .json_parser import parse_json
+from .json_parser import parse_json, parse_schema
 from .save_to import SUPPORTED_EXTENSIONS
 
 # pip install Jinja2
@@ -29,11 +29,11 @@ BUBBLE_RATIO = 0.8
 HEIGHT_TEXT_OFFSET = 1.5  # to ensure text is aligned vertically middle
 
 
-def generate_by_schema(schema: IdBoxSchema):
-    return generate(dataclasses.asdict(schema), schema.data_matrix_text)
+def generate_svg_params_by_schema(schema: IdBoxSchema):
+    return parse_schema(schema)
 
 
-def generate(template_data, data_matrix_text: Optional[str] = None):
+def generate_svg_params(template_data, data_matrix_text: Optional[str] = None):
     with open(FILENAME_DEFAULT_JSON) as f:
         data = json.load(f)
 
@@ -57,14 +57,25 @@ def generate(template_data, data_matrix_text: Optional[str] = None):
     data["height_text_offset"] = HEIGHT_TEXT_OFFSET
 
     data["data_matrix"] = []
-    if data_matrix_text != None:
+    if data_matrix_text is not None:
         data["data_matrix"] = str_to_datamatrix(data_matrix_text)
+    return data
 
+
+def create_svg_from_params(params: SvgParams):
     svg_template_filepath = _ASSET_DIR / "template.svg"
     with open(svg_template_filepath) as f:
         svg_template = Template(f.read())
 
-    return svg_template.render(**data)
+    return svg_template.render(**dataclasses.asdict(params))
+
+
+def create_svg(params):
+    svg_template_filepath = _ASSET_DIR / "template.svg"
+    with open(svg_template_filepath) as f:
+        svg_template = Template(f.read())
+
+    return svg_template.render(**params)
 
 
 def save_svg_to_file(content_svg, filename_output, extension=None, use_local=True):
@@ -161,7 +172,8 @@ def main():
     if Path(filename_output).suffix[1:] in SUPPORTED_EXTENSIONS:
         args.extension = Path(filename_output).suffix[1:]
 
-    content_svg = generate(template_data)
+    svg_params = generate_svg_params(template_data)
+    content_svg = create_svg(svg_params)
     save_svg_to_file(
         content_svg,
         filename_output,

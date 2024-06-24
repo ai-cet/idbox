@@ -45,14 +45,6 @@
   {% endif %}
 {% endfor %}
 
-<!-- Draw vertical grid lines -->
-{% for column in columns %}
-  {% if column.get("hasDivider", False) %}
-    {% set i = loop.index %}
-    <line x1="{{ i * width_box }}" y1="{{ height_box + height_writing }}" x2="{{ i * width_box }}" y2="{{ height_max }}" class="gridline"/>
-  {% endif %}
-{% endfor %}
-
 <!-- Draw bubbles -->
 {% for column in columns %}
   {% set i = loop.index0 %}
@@ -65,7 +57,7 @@
         <ellipse cx="{{ (i + 0.5) * width_box }}" cy="{{ (j + 1.5) * height_box + height_writing }}" rx="{{ 0.5 * width_bubble }}" ry="{{ 0.5 * height_bubble }}" stroke="black" fill="white"/>
       {% endif %}
     {% endif %}
-    <text x="{{ (i + 0.5 * (1 + value.get('isLabel', False))) * width_box }}" y="{{ (j + 1.5) * height_box + height_writing + height_text_offset }}" font-weight="{{ column['fontWeight'] }}" font-size="{{ column['fontSize'] }}" fill="{{ column['color'] }}"{% if column.get('hideCircle', False) %} class="right-align"{% endif %}>{{ value['value'] }}</text>
+    <text text-anchor="middle" dominant-baseline="middle" x="{{ (i + 0.5 * (1 + value.get('isLabel', False))) * width_box }}" y="{{ (j + 1.5) * height_box + height_writing }}" font-weight="{{ column['fontWeight'] }}" font-size="{{ column['fontSize'] }}" fill="{{ column['color'] }}"{% if column.get('hideCircle', False) %} class="right-align"{% endif %}>{{ value['value'] }}</text>
   {% endfor %}
 {% endfor %}
 
@@ -109,12 +101,19 @@
     {% endfor %}
   {% endfor %}
 
+<!-- Draw vertical grid lines -->
+{% for column in columns %}
+  {% if column.get("hasDivider", False) %}
+    {% set i = loop.index %}
+    <line x1="{{ i * width_box }}" y1="{{ height_box + height_writing }}" x2="{{ i * width_box }}" y2="{{ height_max }}" class="gridline"/>
+  {% endif %}
+{% endfor %}
+
 <!-- Draw horizontal grid lines -->
   <line x1="0" x2="{{ width_max }}" y1="{{ height_box }}" y2="{{ height_box }}" class="gridline"/>
   <line x1="0" x2="{{ width_max }}" y1="{{ height_box + height_writing }}" y2="{{ height_box + height_writing }}" class="gridline"/>
 
   <!-- Draw the outer box -->
-  <!-- <rect x="0" y="0" width="{{ width_box * num_columns }}" height="{{ height_max }}" rx="10" ry="10" class="borderline"/> -->
   <path d="M 0,0
            h {{ width_max }}
            v {{ height_max - 10 }}

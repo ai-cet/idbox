@@ -12,17 +12,27 @@ class IdBoxSchemaHeader:
 
 
 @dataclass
-class IdBoxSchemaCustomColumnDefs:
+class IdBoxSchemaCustomFieldDefs:
     id: str
     values: str
+    bubbles_per_column: int = 13
     defaultValue: str = ""
     fontSize: int = 15
     fontWeight: str = "normal"
     isEmbed: bool = True
     color: str = "#c2c3c3"
     fill: str = "#ffffff"
-    hasDivider: bool = False
+    hasDivider: bool = True
     hideCircle: bool = False
+
+
+@dataclass
+class BubbleLoc:
+    order_priority: int
+    center_x: int
+    center_y: int
+    radius_x: int
+    radius_y: int
 
 
 @dataclass
@@ -30,7 +40,55 @@ class IdBoxSchema:
     """Schema for id box"""
 
     header: IdBoxSchemaHeader
-    columns: str
-    columnTypes: list[IdBoxSchemaCustomColumnDefs] = field(default_factory=lambda: [])
+    fields: dict[str, IdBoxSchemaCustomFieldDefs] = field(default_factory=lambda: {})
     fills: list[str] = field(default_factory=lambda: [])
     data_matrix_text: Optional[str] = None
+
+
+@dataclass
+class SvgHeaderParam:
+    value: str
+    fontWeight: str
+    fontSize: int
+    fill: str
+    color: str
+
+
+@dataclass
+class SvgBubbleParam:
+    value: str
+    isHidden: bool
+    isShaded: bool
+    isLabel: bool
+
+
+@dataclass
+class SvgColumnParam:
+    fieldId: str
+    values: list[SvgBubbleParam]
+    fontSize: int
+    fontWeight: str
+    isEmbed: bool
+    color: str
+    fill: str
+    hasDivider: bool
+    hideCircle: bool
+
+
+@dataclass
+class SvgParams:
+    width_max: float
+    height_max: float
+    width_box: float
+    height_box: float
+    width_bubble: float
+    height_bubble: float
+
+    height_writing: float
+    height_text_offset: float
+
+    columns: list[SvgColumnParam]
+    header: SvgHeaderParam
+    data_matrix: list[list[bool]]
+
+    default_value_position_size_triplets: list[tuple[str, float, int]]

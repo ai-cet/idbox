@@ -1,5 +1,16 @@
+import dataclasses
 import re
 import uuid
+
+from idbox_generator.data_matrix import str_to_datamatrix
+
+from .schema import (
+    IdBoxSchema,
+    SvgBubbleParam,
+    SvgColumnParam,
+    SvgHeaderParam,
+    SvgParams,
+)
 
 COLUMN_DIVIDER = "|"
 COLUMN_SEPARATOR = ";"
@@ -183,3 +194,81 @@ def get_uid(reserved_keys=set()):
     while uid in reserved_keys:
         uid = uuid.uuid4().hex
     return uid
+
+
+def parse_schema(schema: IdBoxSchema) -> SvgParams:
+    header = SvgHeaderParam(**dataclasses.asdict(schema.header))
+    columns = parse_schema_fields(schema)
+
+    WIDTH_DEFAULT = 30
+    HEIGHT_DEFAULT = 30
+    HEIGHT_WRITING = 40
+    BUBBLE_RATIO = 0.8
+    HEIGHT_TEXT_OFFSET = 1.5  # to ensure text is aligned vertically middle
+
+    num_rows = max(fieldDef.bubbles_per_column for fieldDef in schema.fields.values())
+    num_columns = len(columns)
+    print(num_rows, num_columns)
+
+    data_matrix = []
+    if schema.data_matrix_text is not None:
+        data_matrix = str_to_datamatrix(schema.data_matrix_text)
+
+    return SvgParams(
+        width_max=WIDTH_DEFAULT * num_columns,
+        height_max=HEIGHT_WRITING + (2 + num_rows) * HEIGHT_DEFAULT,
+        width_box=WIDTH_DEFAULT,
+        height_box=HEIGHT_DEFAULT,
+        width_bubble=WIDTH_DEFAULT * BUBBLE_RATIO,
+        height_bubble=HEIGHT_DEFAULT * BUBBLE_RATIO,
+        height_writing=HEIGHT_WRITING,
+        height_text_offset=HEIGHT_TEXT_OFFSET,
+        columns=columns,
+        header=header,
+        data_matrix=data_matrix,
+        default_value_position_size_triplets=[],
+    )
+
+
+def parse_schema_fields(schema: IdBoxSchema) -> list[SvgColumnParam]:
+    columns: list[SvgColumnParam] = []
+    for field_id, field_def in schema.fields.items():
+        col_values = parse_schema_field_values(
+            field_def.values, field_def.bubbles_per_column
+        )
+        for values in col_values:
+            columns.append(
+                SvgColumnParam(
+                    fieldId=field_id,
+                    values=values,
+                    fontSize=field_def.fontSize,
+                    fontWeight=field_def.fontWeight,
+                    isEmbed=field_def.isEmbed,
+                    color=field_def.color,
+                    fill=field_def.fill,
+                    hasDivider=False,
+                    hideCircle=field_def.hideCircle,
+                )
+            )
+        columns[-1].hasDivider = field_def.hasDivider
+    columns[-1].hasDivider = False
+    return columns
+
+
+def parse_schema_field_values(
+    values: str, bubbles_per_column: int
+) -> list[list[SvgBubbleParam]]:
+    valuesLst = values.split(VALUE_SEPARATOR)
+    columns: list[list[SvgBubbleParam]] = []
+    for s in range(0, len(valuesLst), bubbles_per_column):
+        columns.append(
+            list(
+                map(
+                    lambda v: SvgBubbleParam(
+                        value=v, isHidden=False, isShaded=False, isLabel=False
+                    ),
+                    valuesLst[s : s + bubbles_per_column],
+                )
+            )
+        )
+    return columns
