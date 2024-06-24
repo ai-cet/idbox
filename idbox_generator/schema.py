@@ -13,7 +13,6 @@ class IdBoxSchemaHeader:
 
 @dataclass
 class IdBoxSchemaCustomFieldDefs:
-    id: str
     values: str
     bubbles_per_column: int = 13
     defaultValue: str = ""
@@ -31,7 +30,7 @@ class IdBoxSchema:
     """Schema for id box"""
 
     header: IdBoxSchemaHeader
-    fields: dict[str, IdBoxSchemaCustomFieldDefs] = field(default_factory=lambda: {})
+    fields: list[IdBoxSchemaCustomFieldDefs] = field(default_factory=lambda: [])
     fills: list[str] = field(default_factory=lambda: [])
     data_matrix_text: Optional[str] = None
 
@@ -48,8 +47,8 @@ class SvgHeaderParam:
 @dataclass
 class SvgBubbleParam:
     value: str
-    offset_x: float
-    offset_y: float
+    center_x: float
+    center_y: float
     radius_x: float
     radius_y: float
     isHidden: bool
@@ -59,7 +58,7 @@ class SvgBubbleParam:
 
 @dataclass
 class SvgColumnParam:
-    fieldId: str
+    fieldIndex: int
     values: list[SvgBubbleParam]
     fontSize: int
     fontWeight: str

@@ -207,7 +207,7 @@ def parse_schema(schema: IdBoxSchema) -> SvgParams:
     header = SvgHeaderParam(**dataclasses.asdict(schema.header))
     columns = parse_schema_fields(schema)
 
-    num_rows = max(fieldDef.bubbles_per_column for fieldDef in schema.fields.values())
+    num_rows = max(fieldDef.bubbles_per_column for fieldDef in schema.fields)
     num_columns = len(columns)
 
     data_matrix = []
@@ -233,7 +233,7 @@ def parse_schema(schema: IdBoxSchema) -> SvgParams:
 def parse_schema_fields(schema: IdBoxSchema) -> list[SvgColumnParam]:
     columns: list[SvgColumnParam] = []
     column_count = 0
-    for field_id, field_def in schema.fields.items():
+    for index, field_def in enumerate(schema.fields):
         col_values = parse_schema_field_values(
             field_def.values,
             column_count,
@@ -242,7 +242,7 @@ def parse_schema_fields(schema: IdBoxSchema) -> list[SvgColumnParam]:
         for values in col_values:
             columns.append(
                 SvgColumnParam(
-                    fieldId=field_id,
+                    fieldIndex=index,
                     values=values,
                     fontSize=field_def.fontSize,
                     fontWeight=field_def.fontWeight,
@@ -279,9 +279,9 @@ def parse_schema_field_values(
                     isHidden=False,
                     isShaded=False,
                     isLabel=False,
-                    offset_x=(column_index + s // bubbles_per_column + 0.5)
+                    center_x=(column_index + s // bubbles_per_column + 0.5)
                     * column_width,
-                    offset_y=(i + 1.5) * row_height + height_writing,
+                    center_y=(i + 1.5) * row_height + height_writing,
                     radius_x=0.5 * column_width * bubble_ratio,
                     radius_y=0.5 * row_height * bubble_ratio,
                 )

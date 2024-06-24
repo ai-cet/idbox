@@ -52,9 +52,9 @@
     {% set j = loop.index0 %}
     {% if not value['isHidden'] %}
       {% if value['isShaded'] %}
-        <ellipse cx="{{ value['offset_x'] }}" cy="{{ value['offset_y'] }}" rx="{{ value['radius_x'] }}" ry="{{ value['radius_y'] }}" stroke="black" fill="black"/>
+        <ellipse cx="{{ value['center_x'] }}" cy="{{ value['center_y'] }}" rx="{{ value['radius_x'] }}" ry="{{ value['radius_y'] }}" stroke="black" fill="black"/>
       {% else %}
-        <ellipse cx="{{ value['offset_x'] }}" cy="{{ value['offset_y'] }}" rx="{{ value['radius_x'] }}" ry="{{ value['radius_y'] }}" stroke="black" fill="white"/>
+        <ellipse cx="{{ value['center_x'] }}" cy="{{ value['center_y'] }}" rx="{{ value['radius_x'] }}" ry="{{ value['radius_y'] }}" stroke="black" fill="white"/>
       {% endif %}
     {% endif %}
     <text text-anchor="middle" dominant-baseline="middle" x="{{ (i + 0.5 * (1 + value.get('isLabel', False))) * width_box }}" y="{{ (j + 1.5) * height_box + height_writing }}" font-weight="{{ column['fontWeight'] }}" font-size="{{ column['fontSize'] }}" fill="{{ column['color'] }}"{% if column.get('hideCircle', False) %} class="right-align"{% endif %}>{{ value['value'] }}</text>
