@@ -75,9 +75,10 @@
   {% endfor %}
 
 <!-- Define the markers -->
+  <!-- Draw marker background bottom-left -->
   <rect x="0" y="0" width="{{ width_box }}" height="{{ height_box }}" fill="white" />
-  <rect x="0" y="{{ height_max - height_box }}" width="{{ width_box }}" height="{{ height_box }}" fill="white" />
-  <rect x="{{ width_max - width_box }}" y="0" width="{{ width_box }}" height="{{ height_box }}" fill="white" />
+  <!-- Draw marker background bottom-right -->
+  <rect x="{{ width_max - width_box }}" y="{{ height_max - height_box }}" width="{{ width_box }}" height="{{ height_box }}" fill="white" />
 
   {% for is_white_row in data_matrix %}
     {% set r = loop.index0 %}
@@ -86,17 +87,13 @@
       {% if is_white %}
         <!-- Draw marker top-left (inkscape <= 1.1 cannot use href) -->
         <rect x="{{ c * width_box / 14 }}" y="{{ r * height_box / 14 }}" width="{{ width_box / 14 }}" height="{{ height_box / 14 }}" fill="white" />
-        <!-- Draw marker bottom-left -->
-        <rect x="{{ c * width_box / 14 }}" y="{{ height_max - height_box + r * height_box / 14 }}" width="{{ width_box / 14 }}" height="{{ height_box / 14 }}" fill="white" />
-        <!-- Draw marker top-right -->
-        <rect x="{{ width_max - width_box + c * width_box / 14 }}" y="{{ r * height_box / 14 }}" width="{{ width_box / 14 }}" height="{{ height_box / 14 }}" fill="white" />
+        <!-- Draw marker bottom-right -->
+        <rect x="{{ width_max - width_box + c * width_box / 14 }}" y="{{ height_max - height_box + r * height_box / 14 }}" width="{{ width_box / 14 }}" height="{{ height_box / 14 }}" fill="white" />
       {% else %}
         <!-- Draw marker top-left (inkscape <= 1.1 cannot use href) -->
         <rect x="{{ c * width_box / 14 }}" y="{{ r * height_box / 14 }}" width="{{ width_box / 14 }}" height="{{ height_box / 14 }}" fill="black" />
-        <!-- Draw marker bottom-left -->
-        <rect x="{{ c * width_box / 14 }}" y="{{ height_max - height_box + r * height_box / 14 }}" width="{{ width_box / 14 }}" height="{{ height_box / 14 }}" fill="black" />
-        <!-- Draw marker top-right -->
-        <rect x="{{ width_max - width_box + c * width_box / 14 }}" y="{{ r * height_box / 14 }}" width="{{ width_box / 14 }}" height="{{ height_box / 14 }}" fill="black" />
+        <!-- Draw marker bottom-right -->
+        <rect x="{{ width_max - width_box + c * width_box / 14 }}" y="{{ height_max - height_box + r * height_box / 14 }}" width="{{ width_box / 14 }}" height="{{ height_box / 14 }}" fill="black" />
       {% endif %}
     {% endfor %}
   {% endfor %}

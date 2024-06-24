@@ -17,7 +17,7 @@ def execute_local(command):
             shell=True,
             text=True,
         )
-    except Exception as e:
+    except Exception:
         import traceback
 
         traceback.print_exc()
@@ -63,9 +63,18 @@ def save_to_svg(filename, content_svg, dpi=None, use_local=None):
 
 
 def save_to_png(filename, content_svg, dpi=300, use_local=True):
-    content = convert_svg(content_svg, "png", dpi=dpi, use_local=use_local)
-    with open(filename, "wb") as f:
-        f.write(content)
+    if use_local:
+        save_to_png_local(filename, content_svg, dpi=dpi)
+    else:
+        content = convert_svg(content_svg, "png", dpi=dpi, use_local=use_local)
+        with open(filename, "wb") as f:
+            f.write(content)
+
+
+def save_to_png_local(filename, content_svg, dpi=300, scale=2):
+    from cairosvg import svg2png
+
+    svg2png(bytestring=content_svg, write_to=filename, dpi=dpi, scale=scale)
 
 
 def save_to_pdf(filename, content_svg, dpi=None, use_local=True):

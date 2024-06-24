@@ -21,7 +21,7 @@ Default output type is in SVG. If you require JPG/PNG/PDF outputs, CarioSVG need
 Ensure that Cario is also on your system.
 
 ```sh
-brew install cairo pkg-config # macOS/Homebrew
+brew install cairo libffi # macOS/Homebrew
 sudo apt-get install libcairo2-dev # Ubuntu/Debian
 ```
 
