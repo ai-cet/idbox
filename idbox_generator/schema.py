@@ -27,15 +27,6 @@ class IdBoxSchemaCustomFieldDefs:
 
 
 @dataclass
-class BubbleLoc:
-    order_priority: int
-    center_x: int
-    center_y: int
-    radius_x: int
-    radius_y: int
-
-
-@dataclass
 class IdBoxSchema:
     """Schema for id box"""
 
@@ -57,6 +48,10 @@ class SvgHeaderParam:
 @dataclass
 class SvgBubbleParam:
     value: str
+    offset_x: float
+    offset_y: float
+    radius_x: float
+    radius_y: float
     isHidden: bool
     isShaded: bool
     isLabel: bool

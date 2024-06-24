@@ -196,31 +196,31 @@ def get_uid(reserved_keys=set()):
     return uid
 
 
+WIDTH_BUBBLE_BOX_DEFAULT = 30
+HEIGHT_BUBBLE_BOX_DEFAULT = 30
+HEIGHT_WRITING = 40
+BUBBLE_RATIO = 0.8
+HEIGHT_TEXT_OFFSET = 1.5  # to ensure text is aligned vertically middle
+
+
 def parse_schema(schema: IdBoxSchema) -> SvgParams:
     header = SvgHeaderParam(**dataclasses.asdict(schema.header))
     columns = parse_schema_fields(schema)
 
-    WIDTH_DEFAULT = 30
-    HEIGHT_DEFAULT = 30
-    HEIGHT_WRITING = 40
-    BUBBLE_RATIO = 0.8
-    HEIGHT_TEXT_OFFSET = 1.5  # to ensure text is aligned vertically middle
-
     num_rows = max(fieldDef.bubbles_per_column for fieldDef in schema.fields.values())
     num_columns = len(columns)
-    print(num_rows, num_columns)
 
     data_matrix = []
     if schema.data_matrix_text is not None:
         data_matrix = str_to_datamatrix(schema.data_matrix_text)
 
     return SvgParams(
-        width_max=WIDTH_DEFAULT * num_columns,
-        height_max=HEIGHT_WRITING + (2 + num_rows) * HEIGHT_DEFAULT,
-        width_box=WIDTH_DEFAULT,
-        height_box=HEIGHT_DEFAULT,
-        width_bubble=WIDTH_DEFAULT * BUBBLE_RATIO,
-        height_bubble=HEIGHT_DEFAULT * BUBBLE_RATIO,
+        width_max=WIDTH_BUBBLE_BOX_DEFAULT * num_columns,
+        height_max=HEIGHT_WRITING + (2 + num_rows) * HEIGHT_BUBBLE_BOX_DEFAULT,
+        width_box=WIDTH_BUBBLE_BOX_DEFAULT,
+        height_box=HEIGHT_BUBBLE_BOX_DEFAULT,
+        width_bubble=WIDTH_BUBBLE_BOX_DEFAULT * BUBBLE_RATIO,
+        height_bubble=HEIGHT_BUBBLE_BOX_DEFAULT * BUBBLE_RATIO,
         height_writing=HEIGHT_WRITING,
         height_text_offset=HEIGHT_TEXT_OFFSET,
         columns=columns,
@@ -232,10 +232,13 @@ def parse_schema(schema: IdBoxSchema) -> SvgParams:
 
 def parse_schema_fields(schema: IdBoxSchema) -> list[SvgColumnParam]:
     columns: list[SvgColumnParam] = []
+    column_count = 0
     for field_id, field_def in schema.fields.items():
         col_values = parse_schema_field_values(
-            field_def.values, field_def.bubbles_per_column
+            field_def.values,
+            column_count,
         )
+        column_count += len(col_values)
         for values in col_values:
             columns.append(
                 SvgColumnParam(
@@ -256,19 +259,32 @@ def parse_schema_fields(schema: IdBoxSchema) -> list[SvgColumnParam]:
 
 
 def parse_schema_field_values(
-    values: str, bubbles_per_column: int
+    values: str,
+    column_index: int,
+    column_width: float = WIDTH_BUBBLE_BOX_DEFAULT,
+    row_height: float = HEIGHT_BUBBLE_BOX_DEFAULT,
+    bubble_ratio: float = BUBBLE_RATIO,
+    height_writing: float = HEIGHT_WRITING,
+    bubbles_per_column: int = 13,
 ) -> list[list[SvgBubbleParam]]:
     valuesLst = values.split(VALUE_SEPARATOR)
     columns: list[list[SvgBubbleParam]] = []
     for s in range(0, len(valuesLst), bubbles_per_column):
-        columns.append(
-            list(
-                map(
-                    lambda v: SvgBubbleParam(
-                        value=v, isHidden=False, isShaded=False, isLabel=False
-                    ),
-                    valuesLst[s : s + bubbles_per_column],
+        row_values = valuesLst[s : s + bubbles_per_column]
+        bubbles: list[SvgBubbleParam] = []
+        for i in range(len(row_values)):
+            bubbles.append(
+                SvgBubbleParam(
+                    value=row_values[i],
+                    isHidden=False,
+                    isShaded=False,
+                    isLabel=False,
+                    offset_x=(column_index + s // bubbles_per_column + 0.5)
+                    * column_width,
+                    offset_y=(i + 1.5) * row_height + height_writing,
+                    radius_x=0.5 * column_width * bubble_ratio,
+                    radius_y=0.5 * row_height * bubble_ratio,
                 )
             )
-        )
+        columns.append(bubbles)
     return columns

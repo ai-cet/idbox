@@ -52,9 +52,9 @@
     {% set j = loop.index0 %}
     {% if not value['isHidden'] %}
       {% if value['isShaded'] %}
-        <ellipse cx="{{ (i + 0.5) * width_box }}" cy="{{ (j + 1.5) * height_box + height_writing }}" rx="{{ 0.5 * width_bubble }}" ry="{{ 0.5 * height_bubble }}" stroke="black" fill="black"/>
+        <ellipse cx="{{ value['offset_x'] }}" cy="{{ value['offset_y'] }}" rx="{{ value['radius_x'] }}" ry="{{ value['radius_y'] }}" stroke="black" fill="black"/>
       {% else %}
-        <ellipse cx="{{ (i + 0.5) * width_box }}" cy="{{ (j + 1.5) * height_box + height_writing }}" rx="{{ 0.5 * width_bubble }}" ry="{{ 0.5 * height_bubble }}" stroke="black" fill="white"/>
+        <ellipse cx="{{ value['offset_x'] }}" cy="{{ value['offset_y'] }}" rx="{{ value['radius_x'] }}" ry="{{ value['radius_y'] }}" stroke="black" fill="white"/>
       {% endif %}
     {% endif %}
     <text text-anchor="middle" dominant-baseline="middle" x="{{ (i + 0.5 * (1 + value.get('isLabel', False))) * width_box }}" y="{{ (j + 1.5) * height_box + height_writing }}" font-weight="{{ column['fontWeight'] }}" font-size="{{ column['fontSize'] }}" fill="{{ column['color'] }}"{% if column.get('hideCircle', False) %} class="right-align"{% endif %}>{{ value['value'] }}</text>
@@ -65,12 +65,12 @@
   <rect x="0" y="0" width="{{ width_max }}" height="{{ height_box }}" fill="{{ header['fill'] }}" />
 
   <!-- Write the header text -->
-  <text x="{{ width_max / 2 }}" y="{{ height_box / 2 + height_text_offset }}" font-size="{{ header['fontSize'] }}" fill="{{ header['color'] }}" class="header">{{ header['value'] }}</text>
+  <text text-anchor="middle" dominant-baseline="middle" x="{{ width_max / 2 }}" y="{{ height_box / 2 }}" font-size="{{ header['fontSize'] }}" fill="{{ header['color'] }}" class="header">{{ header['value'] }}</text>
 
   <!-- Write the default values in text area -->
   {% for value, position, font_size in default_value_position_size_triplets %}
     {% if value %}
-      <text x="{{ position * width_box }}" y="{{ height_box + 0.5 * height_writing + height_text_offset }}" font-size="{{ font_size }}" class="default">{{ value }}</text>
+      <text text-anchor="middle" dominant-baseline="middle" x="{{ position * width_box }}" y="{{ height_box + 0.5 * height_writing }}" font-size="{{ font_size }}" class="default">{{ value }}</text>
     {% endif %}
   {% endfor %}
 

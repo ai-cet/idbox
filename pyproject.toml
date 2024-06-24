@@ -17,6 +17,7 @@ include = [
 
 [tool.poetry.scripts]
 generate = 'idbox_generator.generate:main'
+test = 'idbox_generator.test:test'
 
 [tool.poetry.dependencies]
 python = "^3.9"
