@@ -13,31 +13,31 @@ from idbox_generator.schema import (
 def test():
     schema = IdBoxSchema(
         header=IdBoxSchemaHeader(
-            value="Student ID",
+            value="STUDENT ID",
             fontWeight="bold",
             fontSize=20,
-            fill="#ffffff",
-            color="#000000",
+            fill="#000000",
+            color="#ffffff",
         ),
         data_matrix_text="nus",
         fields=[
             IdBoxSchemaCustomFieldDefs(
-                values="1;2;3;4;5;6;7;8",
+                values="0;1;2;3;4;5;6;7;8;9",
             ),
             IdBoxSchemaCustomFieldDefs(
-                values="a;b;c;d;e;f;g;h;i;j;k;l;m;n;o;p;q;r;s;t;u;v;w;x;y;z",
+                values="A;B;C;D;E;F;G;H;I;J;K;L;M;N;O;P;Q;R;S;T;U;V;W;X;Y;Z"
             ),
             IdBoxSchemaCustomFieldDefs(
-                values="x;y;z",
+                values="X;Y;Z",
             ),
             IdBoxSchemaCustomFieldDefs(
-                values="1;2;3;4;5;6;7;8",
+                values="0;1;2;3;4;5;6;7;8;9",
             ),
             IdBoxSchemaCustomFieldDefs(
-                values="1;2;3;4;5;6;7;8",
+                values="0;1;2;3;4;5;6;7;8;9",
             ),
             IdBoxSchemaCustomFieldDefs(
-                values="1;2;3;4;5;6;7;8",
+                values="0;1;2;3;4;5;6;7;8;9",
             ),
         ],
     )

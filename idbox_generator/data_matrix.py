@@ -2,7 +2,7 @@ from pylibdmtx.pylibdmtx import encode
 
 # The below constants are only for 10x10 datamatrix
 ENCODING_SIZE_NAMES = "10x10"
-EDGE_SIZE = 10 + 4  # 10 for tiles, 4 for paddings
+EDGE_SIZE = 14
 BYTES_PER_PIXEL = 3
 BYTES_PER_SQUARE_EDGE = BYTES_PER_PIXEL * 5
 BYTES_PER_DATAMATRIX_EDGE = BYTES_PER_SQUARE_EDGE * 70

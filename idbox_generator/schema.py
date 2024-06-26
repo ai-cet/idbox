@@ -5,10 +5,11 @@ from typing import Optional
 @dataclass
 class IdBoxSchemaHeader:
     value: str
+    height: float = 40
     fontWeight: str = "bold"
     fontSize: int = 20
-    fill: str = "#ffffff"
-    color: str = "#000000"
+    fill: str = "#000000"
+    color: str = "#ffffff"
 
 
 @dataclass
@@ -20,7 +21,7 @@ class IdBoxSchemaCustomFieldDefs:
     fontWeight: str = "normal"
     isEmbed: bool = True
     color: str = "#c2c3c3"
-    fill: str = "#ffffff"
+    fill: Optional[str] = None
     hasDivider: bool = True
     hideCircle: bool = False
 
@@ -31,13 +32,14 @@ class IdBoxSchema:
 
     header: IdBoxSchemaHeader
     fields: list[IdBoxSchemaCustomFieldDefs] = field(default_factory=lambda: [])
-    fills: list[str] = field(default_factory=lambda: [])
+    fills: list[str] = field(default_factory=lambda: ["#ffffff", "#e6e6e6"])
     data_matrix_text: Optional[str] = None
 
 
 @dataclass
 class SvgHeaderParam:
     value: str
+    height: float
     fontWeight: str
     fontSize: int
     fill: str
@@ -83,6 +85,7 @@ class SvgParams:
 
     columns: list[SvgColumnParam]
     header: SvgHeaderParam
+    footer_height: float
     data_matrix: list[list[bool]]
 
     default_value_position_size_triplets: list[tuple[str, float, int]]

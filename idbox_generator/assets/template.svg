@@ -4,7 +4,7 @@
     * {
       font-family: monospace;
       text-anchor: middle;
-      dominant-baseline: central;
+      dominant-baseline: middle;
       line-height: 0;
     }
     .borderline {
@@ -31,13 +31,13 @@
 <!-- Shade in vertical fills -->
 {% for column in columns %}
   {% set i = loop.index0 %}
-  <!-- If last then make bottom right rounded -->
-  {% if loop.last %}
+  <!-- If first then make bottom left rounded -->
+  {% if loop.first %}
   <path d="M {{ i * width_box }},{{ height_box }}
            h {{ width_box }}
-           v {{ height_max - height_box - 10 }}
-           a 10,10 0 0 1 -10,10
+           v {{ height_max - height_box }}
            h {{ -(width_box - 10) }}
+           q -10,0 -10,-10
            Z" fill="{{ column['fill'] }}"/>
   {% else %}
   <!-- No rounded corners -->
@@ -57,43 +57,64 @@
         <ellipse cx="{{ value['center_x'] }}" cy="{{ value['center_y'] }}" rx="{{ value['radius_x'] }}" ry="{{ value['radius_y'] }}" stroke="black" fill="white"/>
       {% endif %}
     {% endif %}
-    <text text-anchor="middle" dominant-baseline="middle" x="{{ (i + 0.5 * (1 + value.get('isLabel', False))) * width_box }}" y="{{ (j + 1.5) * height_box + height_writing }}" font-weight="{{ column['fontWeight'] }}" font-size="{{ column['fontSize'] }}" fill="{{ column['color'] }}"{% if column.get('hideCircle', False) %} class="right-align"{% endif %}>{{ value['value'] }}</text>
+    <text text-anchor="middle" dominant-baseline="middle" x="{{ (i + 0.5 * (1 + value.get('isLabel', False))) * width_box }}" y="{{ (j + 0.5) * height_box + header['height'] + height_writing }}" font-weight="{{ column['fontWeight'] }}" font-size="{{ column['fontSize'] }}" fill="{{ column['color'] }}"{% if column.get('hideCircle', False) %} class="right-align"{% endif %}>{{ value['value'] }}</text>
   {% endfor %}
 {% endfor %}
 
   <!-- Draw the header background, rounded on top-left and top-right by 10 -->
-  <rect x="0" y="0" width="{{ width_max }}" height="{{ height_box }}" fill="{{ header['fill'] }}" />
+  <path d="M 0,{{ header['height'] }}
+            h {{ width_max }}
+            v {{ -(header['height'] - 10) }}
+            a 10,10 0 0 0 -10,-10
+            h {{ -(width_max - 20) }}
+            a 10,10 0 0 0 -10,10
+        Z" fill="{{ header['fill'] }}"/>
 
   <!-- Write the header text -->
-  <text text-anchor="middle" dominant-baseline="middle" x="{{ width_max / 2 }}" y="{{ height_box / 2 }}" font-size="{{ header['fontSize'] }}" fill="{{ header['color'] }}" class="header">{{ header['value'] }}</text>
+  <text text-anchor="middle" dominant-baseline="middle" x="{{ (header['height'] + width_max) / 2 }}" y="{{ header['height'] / 2 }}" font-size="{{ header['fontSize'] }}" fill="{{ header['color'] }}" class="header">{{ header['value'] }}</text>
+
+  <!-- Draw the footer background, rounded on bot-left and bot-right by 10 -->
+  <path d="M 0,{{ height_max - footer_height }}
+            h {{ width_max }}
+            v {{ footer_height }}
+            h {{ -(width_max - 10) }}
+            a 10,10 0 0 1 -10,-10
+        Z" fill="{{ header['fill'] }}"/>
 
   <!-- Write the default values in text area -->
   {% for value, position, font_size in default_value_position_size_triplets %}
     {% if value %}
-      <text text-anchor="middle" dominant-baseline="middle" x="{{ position * width_box }}" y="{{ height_box + 0.5 * height_writing }}" font-size="{{ font_size }}" class="default">{{ value }}</text>
+      <text text-anchor="middle" dominant-baseline="middle" x="{{ position * width_box }}" y="{{ header['height'] + 0.5 * height_writing }}" font-size="{{ font_size }}" class="default">{{ value }}</text>
     {% endif %}
   {% endfor %}
 
 <!-- Define the markers -->
   <!-- Draw marker background bottom-left -->
-  <rect x="0" y="0" width="{{ width_box }}" height="{{ height_box }}" fill="white" />
+  <rect
+    x="{{ header['height'] / 14}}"
+    y="{{ header['height'] / 14 }}"
+    width="{{ 12 * header['height'] / 14 }}"
+    height="{{ 12 * header['height'] / 14 }}"
+    fill="white"
+  />
   <!-- Draw marker background bottom-right -->
-  <rect x="{{ width_max - width_box }}" y="{{ height_max - height_box }}" width="{{ width_box }}" height="{{ height_box }}" fill="white" />
+  <rect
+    x="{{ width_max - 13 * footer_height / 14 }}"
+    y="{{ height_max - 13 * footer_height / 14 }}"
+    width="{{ 12 * footer_height / 14 }}"
+    height="{{ 12 * footer_height / 14 }}"
+    fill="white"
+  />
 
   {% for is_white_row in data_matrix %}
     {% set r = loop.index0 %}
     {% for is_white in is_white_row %}
       {% set c = loop.index0 %}
-      {% if is_white %}
+      {% if not is_white %}
         <!-- Draw marker top-left (inkscape <= 1.1 cannot use href) -->
-        <rect x="{{ c * width_box / 14 }}" y="{{ r * height_box / 14 }}" width="{{ width_box / 14 }}" height="{{ height_box / 14 }}" fill="white" />
+        <rect x="{{ c * header['height'] / 14 }}" y="{{ r * header['height'] / 14 }}" width="{{ header['height'] / 14 }}" height="{{ header['height'] / 14 }}" fill="black" />
         <!-- Draw marker bottom-right -->
-        <rect x="{{ width_max - width_box + c * width_box / 14 }}" y="{{ height_max - height_box + r * height_box / 14 }}" width="{{ width_box / 14 }}" height="{{ height_box / 14 }}" fill="white" />
-      {% else %}
-        <!-- Draw marker top-left (inkscape <= 1.1 cannot use href) -->
-        <rect x="{{ c * width_box / 14 }}" y="{{ r * height_box / 14 }}" width="{{ width_box / 14 }}" height="{{ height_box / 14 }}" fill="black" />
-        <!-- Draw marker bottom-right -->
-        <rect x="{{ width_max - width_box + c * width_box / 14 }}" y="{{ height_max - height_box + r * height_box / 14 }}" width="{{ width_box / 14 }}" height="{{ height_box / 14 }}" fill="black" />
+        <rect x="{{ width_max - footer_height + c * footer_height / 14 }}" y="{{ height_max - footer_height + r * footer_height / 14 }}" width="{{ footer_height / 14 }}" height="{{ footer_height / 14 }}" fill="black" />
       {% endif %}
     {% endfor %}
   {% endfor %}
@@ -102,19 +123,21 @@
 {% for column in columns %}
   {% if column.get("hasDivider", False) %}
     {% set i = loop.index %}
-    <line x1="{{ i * width_box }}" y1="{{ height_box + height_writing }}" x2="{{ i * width_box }}" y2="{{ height_max }}" class="gridline"/>
+    <line x1="{{ i * width_box }}" y1="{{ header['height'] + height_writing }}" x2="{{ i * width_box }}" y2="{{ height_max - footer_height }}" class="gridline"/>
   {% endif %}
 {% endfor %}
 
 <!-- Draw horizontal grid lines -->
-  <line x1="0" x2="{{ width_max }}" y1="{{ height_box }}" y2="{{ height_box }}" class="gridline"/>
-  <line x1="0" x2="{{ width_max }}" y1="{{ height_box + height_writing }}" y2="{{ height_box + height_writing }}" class="gridline"/>
+  <line x1="0" x2="{{ width_max }}" y1="{{ header['height'] }}" y2="{{ header['height'] }}" class="gridline"/>
+  <line x1="0" x2="{{ width_max }}" y1="{{ header['height'] + height_writing }}" y2="{{ header['height'] + height_writing }}" class="gridline"/>
 
   <!-- Draw the outer box -->
-  <path d="M 0,0
-           h {{ width_max }}
-           v {{ height_max - 10 }}
-           a 10,10 0 0 1 -10,10
+  <path d="M {{ width_max}},{{ height_max }}
            h {{ -(width_max - 10) }}
+           a 10,10 0 0 1 -10,-10
+           v {{ -(height_max - 20) }}
+           a 10,10 0 0 1 10,-10
+           h {{ width_max - 20 }}
+           a 10,10 0 0 1 10,10
            Z" class="borderline"/>
 </svg>

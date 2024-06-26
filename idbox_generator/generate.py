@@ -24,6 +24,7 @@ _DATA_DIR = _CURRENT_DIR / "data"
 FILENAME_DEFAULT_JSON = _DATA_DIR / "default.json"
 WIDTH_DEFAULT = 30
 HEIGHT_DEFAULT = 30
+HEIGHT_TITLE = 40
 HEIGHT_WRITING = 40
 BUBBLE_RATIO = 0.8
 HEIGHT_TEXT_OFFSET = 1.5  # to ensure text is aligned vertically middle
@@ -47,10 +48,13 @@ def generate_svg_params(template_data, data_matrix_text: Optional[str] = None):
     if len(columns[0]["values"]) == max_rows:
         data["num_rows"] += 1
 
-    data["height_max"] = HEIGHT_WRITING + (1 + data["num_rows"]) * HEIGHT_DEFAULT
+    data["height_max"] = (
+        HEIGHT_TITLE + HEIGHT_WRITING + data["num_rows"] * HEIGHT_DEFAULT
+    )
     data["width_max"] = WIDTH_DEFAULT * data["num_columns"]
     data["width_box"] = WIDTH_DEFAULT
     data["height_box"] = HEIGHT_DEFAULT
+    data["height_title"] = HEIGHT_TITLE
     data["height_writing"] = HEIGHT_WRITING
     data["width_bubble"] = WIDTH_DEFAULT * BUBBLE_RATIO
     data["height_bubble"] = HEIGHT_DEFAULT * BUBBLE_RATIO
@@ -59,6 +63,8 @@ def generate_svg_params(template_data, data_matrix_text: Optional[str] = None):
     data["data_matrix"] = []
     if data_matrix_text is not None:
         data["data_matrix"] = str_to_datamatrix(data_matrix_text)
+        data["data_matrix_offset_x"] = (HEIGHT_TITLE - HEIGHT_DEFAULT) / 2
+        data["data_matrix_offset_y"] = (HEIGHT_TITLE - HEIGHT_DEFAULT) / 2
     return data
 
 
