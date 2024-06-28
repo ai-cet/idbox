@@ -1,0 +1,140 @@
+<svg width="{{ width_max }}" height="{{ height_max }}" xmlns="http://www.w3.org/2000/svg">
+<!-- Define the default styles -->
+  <style>
+    * {
+      font-family: monospace;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      line-height: 0;
+    }
+    .borderline {
+      fill: none;
+      stroke: black;
+      stroke-width: 2;
+    }
+    .gridline {
+      stroke: black;
+      stroke-width: 1;
+    }
+    .header {
+      font-family: helvetica, sans-serif;
+      font-weight: {{ header["fontWeight"] }};
+    }
+    .default {
+      font-weight: {{ header["fontWeight"] }};
+    }
+    .right-align {
+      text-anchor: end;
+    }
+  </style>
+
+<!-- Shade in vertical fills -->
+{% for column in columns %}
+  {% set i = loop.index0 %}
+  <!-- If first then make bottom left rounded -->
+  {% if loop.first %}
+  <path d="M {{ i * width_box }},{{ height_box }}
+           h {{ width_box }}
+           v {{ height_max - height_box }}
+           h {{ -(width_box - 10) }}
+           q -10,0 -10,-10
+           Z" fill="{{ column['fill'] }}"/>
+  {% else %}
+  <!-- No rounded corners -->
+  <rect x="{{ i * width_box }}" y="{{ height_box }}" width="{{ width_box }}" height="{{ height_max - height_box }}" fill="{{ column['fill'] }}"/>
+  {% endif %}
+{% endfor %}
+
+<!-- Draw bubbles -->
+{% for column in columns %}
+  {% set i = loop.index0 %}
+  {% for value in column['values'] %}
+    {% set j = loop.index0 %}
+    {% if not value['isHidden'] %}
+      {% if value['isShaded'] %}
+        <ellipse cx="{{ value['center_x'] }}" cy="{{ value['center_y'] }}" rx="{{ value['radius_x'] }}" ry="{{ value['radius_y'] }}" stroke="black" fill="black"/>
+      {% else %}
+        <ellipse cx="{{ value['center_x'] }}" cy="{{ value['center_y'] }}" rx="{{ value['radius_x'] }}" ry="{{ value['radius_y'] }}" stroke="black" fill="white"/>
+      {% endif %}
+    {% endif %}
+    <text text-anchor="middle" dominant-baseline="middle" x="{{ (i + 0.5 * (1 + value.get('isLabel', False))) * width_box }}" y="{{ (j + 0.5) * height_box + header['height'] + height_writing }}" font-weight="{{ column['fontWeight'] }}" font-size="{{ column['fontSize'] }}" fill="{{ column['color'] }}"{% if column.get('hideCircle', False) %} class="right-align"{% endif %}>{{ value['value'] }}</text>
+  {% endfor %}
+{% endfor %}
+
+  <!-- Draw the header background, rounded on top-left and top-right by 10 -->
+  <path d="M 0,{{ header['height'] }}
+            h {{ width_max }}
+            v {{ -(header['height'] - 10) }}
+            a 10,10 0 0 0 -10,-10
+            h {{ -(width_max - 20) }}
+            a 10,10 0 0 0 -10,10
+        Z" fill="{{ header['fill'] }}"/>
+
+  <!-- Write the header text -->
+  <text text-anchor="middle" dominant-baseline="middle" x="{{ (header['height'] + width_max) / 2 }}" y="{{ header['height'] / 2 }}" font-size="{{ header['fontSize'] }}" fill="{{ header['color'] }}" class="header">{{ header['value'] }}</text>
+
+  <!-- Draw the footer background, rounded on bot-left and bot-right by 10 -->
+  <path d="M 0,{{ height_max - footer_height }}
+            h {{ width_max }}
+            v {{ footer_height }}
+            h {{ -(width_max - 10) }}
+            a 10,10 0 0 1 -10,-10
+        Z" fill="{{ header['fill'] }}"/>
+
+  <!-- Write the default values in text area -->
+  {% for value, position, font_size in default_value_position_size_triplets %}
+    {% if value %}
+      <text text-anchor="middle" dominant-baseline="middle" x="{{ position * width_box }}" y="{{ header['height'] + 0.5 * height_writing }}" font-size="{{ font_size }}" class="default">{{ value }}</text>
+    {% endif %}
+  {% endfor %}
+
+<!-- Define the markers -->
+  {% for data_matrix in data_matrices %}
+    <rect
+      x="{{ data_matrix['left'] - data_matrix['margin'] }}"
+      y="{{ data_matrix['top'] - data_matrix['margin'] }}"
+      width="{{ data_matrix['width'] + 2 * data_matrix['margin'] }}"
+      height="{{ data_matrix['height'] + 2 * data_matrix['margin'] }}"
+      fill="white"
+    />
+    {% set tiles = data_matrix['tiles'] %}
+    {% for is_white_row in tiles %}
+      {% set r = loop.index0 %}
+      {% for is_white in is_white_row %}
+        {% set c = loop.index0 %}
+        {% if not is_white %}
+          <!-- Draw marker (inkscape <= 1.1 cannot use href) -->
+          <rect
+            x="{{ data_matrix['left'] + c * data_matrix['width'] / 10 }}"
+            y="{{ data_matrix['top'] + r * data_matrix['height'] / 10 }}"
+            width="{{ data_matrix['width'] / 10 }}"
+            height="{{ data_matrix['height'] / 10 }}"
+            fill="black"
+          />
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  {% endfor %}
+
+<!-- Draw vertical grid lines -->
+{% for column in columns %}
+  {% if column.get("hasDivider", False) %}
+    {% set i = loop.index %}
+    <line x1="{{ i * width_box }}" y1="{{ header['height'] + height_writing }}" x2="{{ i * width_box }}" y2="{{ height_max - footer_height }}" class="gridline"/>
+  {% endif %}
+{% endfor %}
+
+<!-- Draw horizontal grid lines -->
+  <line x1="0" x2="{{ width_max }}" y1="{{ header['height'] }}" y2="{{ header['height'] }}" class="gridline"/>
+  <line x1="0" x2="{{ width_max }}" y1="{{ header['height'] + height_writing }}" y2="{{ header['height'] + height_writing }}" class="gridline"/>
+
+  <!-- Draw the outer box -->
+  <path d="M {{ width_max}},{{ height_max }}
+           h {{ -(width_max - 10) }}
+           a 10,10 0 0 1 -10,-10
+           v {{ -(height_max - 20) }}
+           a 10,10 0 0 1 10,-10
+           h {{ width_max - 20 }}
+           a 10,10 0 0 1 10,10
+           Z" class="borderline"/>
+</svg>
