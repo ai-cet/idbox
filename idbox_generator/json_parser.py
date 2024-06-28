@@ -1,17 +1,17 @@
-import os
 import re
-import json
 import uuid
 
 COLUMN_DIVIDER = "|"
 COLUMN_SEPARATOR = ";"
-regex_column = re.compile(rf'(?<!\[)([{COLUMN_DIVIDER}{COLUMN_SEPARATOR}])(?![^\[]*\])')
+regex_column = re.compile(rf"(?<!\[)([{COLUMN_DIVIDER}{COLUMN_SEPARATOR}])(?![^\[]*\])")
 
 VALUE_DIVIDER = "|"
 VALUE_SEPARATOR = ";"
-regex_value = re.compile(rf'([{VALUE_SEPARATOR}{VALUE_DIVIDER}])')
+regex_value = re.compile(rf"([{VALUE_SEPARATOR}{VALUE_DIVIDER}])")
 
-regex_anonymous = re.compile(r'(?!$)(?P<non_embed>\+)?(?P<column_identifier>.*?)(?P<values>\[.*?\])?(?P<default_value>\(.*?\))?$')
+regex_anonymous = re.compile(
+    r"(?!$)(?P<non_embed>\+)?(?P<column_identifier>.*?)(?P<values>\[.*?\])?(?P<default_value>\(.*?\))?$"
+)
 
 WIDTH_DEFAULT = 30
 HEIGHT_DEFAULT = 30
@@ -28,6 +28,7 @@ DEFAULT_COLUMN_TYPE = {
     "hasDivider": False,
     "hideCircle": False,
 }
+
 
 def parse_json(data, template_data):
     data["header"] = data.get("header", {})
@@ -46,8 +47,9 @@ def parse_json(data, template_data):
     columns_split, default_value_position_size_triplets = parse_columns(data)
     data["columns"] = columns_split
     data["default_value_position_size_triplets"] = default_value_position_size_triplets
-    
+
     return data
+
 
 def parse_columns(data):
     column_string = data["columns"]
@@ -74,8 +76,7 @@ def parse_columns(data):
         uid = get_uid(column_types.keys())
         column_identifiers[i] = uid
         column_types[uid] = column_types.get(
-            column_identifier,
-            column_types["default"]
+            column_identifier, column_types["default"]
         ).copy()
 
         values = groups.group("values")
@@ -90,7 +91,6 @@ def parse_columns(data):
         if non_embed:
             column_types[uid]["isEmbed"] = False
             column_types[uid]["color"] = "#000000"
-            
 
     columns = []
     for i, column_identifier in enumerate(column_identifiers):
@@ -100,7 +100,7 @@ def parse_columns(data):
             column = column_types[column_identifier].copy()
             columns.append(column)
 
-    if len(column_fills) > 0: # apply fill pattern if available
+    if len(column_fills) > 0:  # apply fill pattern if available
         for i, column in enumerate(columns):
             column["fill"] = column.get("fill", column_fills[i % len(column_fills)])
 
@@ -121,30 +121,37 @@ def parse_columns(data):
                         "isShaded": False,
                         "isHidden": True,
                         "isLabel": True,
-                    } for value in values
+                    }
+                    for value in values
                 ]
                 labels["hideCircle"] = True
                 labels["hasDivider"] = False
                 bubbles = column.copy()
                 bubbles["values"] = [
                     {
-                        "value": "", 
+                        "value": "",
                         "isShaded": value == column["defaultValue"],
                         "isHidden": value == "",
-                    } for value in values
+                    }
+                    for value in values
                 ]
-                bubbles["hasDivider"] = column["hasDivider"] if i == len(column["values"]) - 1 else False
+                bubbles["hasDivider"] = (
+                    column["hasDivider"] if i == len(column["values"]) - 1 else False
+                )
                 columns_split.extend([labels, bubbles])
             else:
                 bubbles = column.copy()
                 bubbles["values"] = [
                     {
-                        "value": value, 
+                        "value": value,
                         "isShaded": value == column["defaultValue"],
                         "isHidden": value == "",
-                    } for value in values
+                    }
+                    for value in values
                 ]
-                bubbles["hasDivider"] = column["hasDivider"] if i == len(column["values"]) - 1 else False
+                bubbles["hasDivider"] = (
+                    column["hasDivider"] if i == len(column["values"]) - 1 else False
+                )
                 columns_split.append(bubbles)
 
     default_value_position_size_triplets = []
@@ -163,11 +170,13 @@ def parse_columns(data):
 
     return columns_split, default_value_position_size_triplets
 
+
 def parse_values(value_string):
     return [
         col.split(VALUE_SEPARATOR) if col else []
         for col in value_string.split(VALUE_DIVIDER)
     ]
+
 
 def get_uid(reserved_keys=set()):
     uid = uuid.uuid4().hex
