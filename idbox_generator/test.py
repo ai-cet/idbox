@@ -1,9 +1,9 @@
 from idbox_generator.generate import (
     create_svg_from_params,
-    generate_svg_params_by_schema,
     save_svg_to_file,
 )
-from idbox_generator.schema import (
+from .schema_handler import parse_schema_to_svg_params
+from .types import (
     IdBoxSchema,
     IdBoxSchemaCustomFieldDefs,
     IdBoxSchemaHeader,
@@ -41,6 +41,6 @@ def test():
             ),
         ],
     )
-    svg_params = generate_svg_params_by_schema(schema)
+    svg_params = parse_schema_to_svg_params(schema)
     svg_content = create_svg_from_params(svg_params)
     save_svg_to_file(svg_content, "test.png", "png")

@@ -8,10 +8,10 @@ from typing import Optional
 
 from jinja2 import Template
 
-from idbox_generator.schema import IdBoxSchema, SvgParams
+from .types import SvgParams
 
-from .data_matrix import str_to_datamatrix
-from .json_parser import parse_json, parse_schema
+from .datamatrix import str_to_datamatrix
+from .json_parser import parse_json
 from .save_to import SUPPORTED_EXTENSIONS
 
 # pip install Jinja2
@@ -28,10 +28,6 @@ HEIGHT_TITLE = 40
 HEIGHT_WRITING = 40
 BUBBLE_RATIO = 0.8
 HEIGHT_TEXT_OFFSET = 1.5  # to ensure text is aligned vertically middle
-
-
-def generate_svg_params_by_schema(schema: IdBoxSchema):
-    return parse_schema(schema)
 
 
 def generate_svg_params(template_data, data_matrix_text: Optional[str] = None):
@@ -88,16 +84,6 @@ def save_svg_to_file(content_svg, filename_output, extension=None, use_local=Tru
     extension = extension or Path(filename_output).suffix[1:]
     converter = SUPPORTED_EXTENSIONS[extension]
     converter(filename_output, content_svg, use_local=use_local)
-
-
-def convert_svg_to_png(content_svg, dpi=300, scale=2) -> bytes:
-    from cairosvg import svg2png
-
-    return svg2png(
-        bytestring=content_svg,
-        dpi=dpi,
-        scale=scale,
-    )  # type: ignore
 
 
 def slugify(text, separator="_"):
