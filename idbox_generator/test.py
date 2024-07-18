@@ -19,7 +19,7 @@ def test():
             fill="#000000",
             color="#ffffff",
         ),
-        data_matrices_text=("abc", "123"),
+        data_matrix_text="abc",
         fields=[
             IdBoxSchemaCustomFieldDefs(
                 values="0;1;2;3;4;5;6;7;8;9",

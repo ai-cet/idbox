@@ -1,5 +1,5 @@
 import dataclasses
-from .datamatrix import str_to_datamatrix
+from .datamatrix import str_to_datamatrix, id_to_aruco_tiles
 from .types import (
     IdBoxSchema,
     SvgBubbleParam,
@@ -30,10 +30,12 @@ def parse_schema_to_svg_params(schema: IdBoxSchema) -> SvgParams:
     )
     num_columns = len(columns)
 
-    data_matrix_tiles = [
-        str_to_datamatrix(text) if text != "" else []
-        for text in schema.data_matrices_text
-    ]
+    data_matrix_tiles = (
+        str_to_datamatrix(schema.data_matrix_text)
+        if schema.data_matrix_text != ""
+        else []
+    )
+    aruco_stub_tiles = id_to_aruco_tiles(schema.aruco_stub_id)
 
     WIDTH_MAX = WIDTH_BUBBLE_BOX_DEFAULT * num_columns
     HEIGHT_MAX = (
@@ -55,7 +57,7 @@ def parse_schema_to_svg_params(schema: IdBoxSchema) -> SvgParams:
         data_matrices=[
             # Top-Left
             SvgDatamatrixParam(
-                tiles=data_matrix_tiles[0],
+                tiles=data_matrix_tiles,
                 top=HEIGHT_HEADER / 14 + DATA_MATRIX_MARGIN,
                 left=HEIGHT_HEADER / 14 + DATA_MATRIX_MARGIN,
                 width=DATA_MATRIX_SIZE,
@@ -64,7 +66,7 @@ def parse_schema_to_svg_params(schema: IdBoxSchema) -> SvgParams:
             ),
             # Bot-Right
             SvgDatamatrixParam(
-                tiles=data_matrix_tiles[1],
+                tiles=aruco_stub_tiles,
                 top=HEIGHT_MAX
                 - HEIGHT_HEADER / 14
                 - DATA_MATRIX_SIZE

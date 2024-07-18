@@ -105,10 +105,10 @@
         {% if not is_white %}
           <!-- Draw marker (inkscape <= 1.1 cannot use href) -->
           <rect
-            x="{{ data_matrix['left'] + c * data_matrix['width'] / 10 }}"
-            y="{{ data_matrix['top'] + r * data_matrix['height'] / 10 }}"
-            width="{{ data_matrix['width'] / 10 }}"
-            height="{{ data_matrix['height'] / 10 }}"
+            x="{{ data_matrix['left'] + c * data_matrix['width'] / is_white_row|length }}"
+            y="{{ data_matrix['top'] + r * data_matrix['height'] / tiles|length }}"
+            width="{{ data_matrix['width'] / is_white_row|length }}"
+            height="{{ data_matrix['height'] / tiles|length }}"
             fill="black"
           />
         {% endif %}
