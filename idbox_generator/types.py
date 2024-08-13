@@ -32,7 +32,7 @@ class IdBoxSchema:
 
     header: IdBoxSchemaHeader
     fields: list[IdBoxSchemaCustomFieldDefs] = field(default_factory=lambda: [])
-    fills: list[str] = field(default_factory=lambda: ["#ffffff", "#e6e6e6"])
+    fills: list[str] = field(default_factory=lambda: ["#ffffff", "#d8e0f2"])
     data_matrix_text: str = ""
     aruco_stub_id: int = 0
 
